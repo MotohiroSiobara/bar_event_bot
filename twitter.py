@@ -41,10 +41,10 @@ class TwitterBot:
       if res.status_code == 200:
         res_ids = res_json["ids"]
         cursor = res_json["next_cursor"]
-        if not cursor:
-          break
         for id in res_ids:
           ids.append(id)
+        if not cursor:
+          break
       else:
         error = res_json["errors"][0]
         self.error_code_decision(error["code"])
@@ -58,9 +58,8 @@ class TwitterBot:
     }
     res = self.twitter.post(url, params)
     res_json = json.loads(res.text)
-    print(res_json)
     if res.status_code == 200:
-      print(res_json["name"])
+      print("follow %s" % res_json["name"])
     else:
       error = res_json["errors"][0]
       self.error_code_decision(error["code"])
@@ -70,10 +69,7 @@ class TwitterBot:
   def get_follows(self, name):
     ids = []
     cursor = None
-    n = 0
     while True:
-      n += 1
-      print(n)
       url = "https://api.twitter.com/1.1/friends/ids.json"
       params = {
         "screen_name": name,
@@ -85,15 +81,16 @@ class TwitterBot:
       if res.status_code == 200:
         res_ids = res_json["ids"]
         cursor = res_json["next_cursor"]
-        if not cursor:
-          break
         for id in res_ids:
           ids.append(id)
+        if not cursor:
+          break
       else:
         error = res_json["errors"][0]
         self.error_code_decision(error["code"])
         break
     return ids
+    print(ids)
 
   def send_direct_message(self, id, text):
     url = "https://api.twitter.com/1.1/direct_messages/new.json"
@@ -106,6 +103,7 @@ class TwitterBot:
     if res.status_code == 200:
       print("%s さんに送信しました" % res_json["sender"]["name"])
     else:
+      print(res_json["errors"][0])
       print("送信失敗")
 
   def error_code_decision(self, code):
@@ -121,14 +119,17 @@ class TwitterBot:
 print("start")
 twitter = TwitterBot()
 # twitter.get_tweets()
-# ids = twitter.get_followers("marble_shinkan")
-# my_follow_ids = twitter.get_follows("student_bar_")
-# my_follower_ids = twitter.get_followers("student_bar_")
-# for id in ids:
-#   if (id in my_follow_ids):
-#     continue
-#   result = twitter.follow(id)
-#   if result == "break":
-#     break
-# for id in my_follower_ids:
-#   twitter.send_direct_message(id, "フォローありがとうございます！4月29日に新歓やるのですが参加しませんか？(°▽°)")
+ids = twitter.get_follows("otsumauniv2017")
+print("ids")
+my_follow_ids = twitter.get_follows("student_bar_")
+print("my_follow_ids")
+my_follower_ids = twitter.get_followers("student_bar_")
+print("my_follwer_ids")
+for id in ids:
+  if (id in my_follow_ids):
+    continue
+  result = twitter.follow(id)
+  if result == "break":
+    break
+for id in my_follower_ids:
+  twitter.send_direct_message(id, "フォローありがとうございます！4月29日に新歓やるのですが参加しませんか？(°▽°)")
