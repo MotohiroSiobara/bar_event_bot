@@ -26,22 +26,30 @@ class TwitterBot:
       self.error_code_decision(error["code"])
       return []
 
-  def get_followers(self, name, count):
-    url = "https://api.twitter.com/1.1/followers/ids.json"
-    params = {
-      'screen_name': name,
-      'count': count
-    }
-    res = self.twitter.get(url, params = params)
-    res_json = json.loads(res.text)
-    if res.status_code == 200:
-      ids = res_json["ids"]
-      return ids
-    else:
-      error = res_json["errors"][0]
-      self.error_code_decision(error["code"])
-      print(error)
-      return []
+  def get_followers(self, name):
+    ids = []
+    cursor = None
+    while True:
+      url = "https://api.twitter.com/1.1/followers/ids.json"
+      params = {
+        'screen_name': name,
+        'count': 5000,
+        'cursor': cursor
+      }
+      res = self.twitter.get(url, params = params)
+      res_json = json.loads(res.text)
+      if res.status_code == 200:
+        res_ids = res_json["ids"]
+        cursor = res_json["next_cursor"]
+        if not cursor:
+          break
+        for id in res_ids:
+          ids.append(id)
+      else:
+        error = res_json["errors"][0]
+        self.error_code_decision(error["code"])
+        break
+    return ids
 
   def follow(self, ids):
     url = "https://api.twitter.com/1.1/friendships/create.json"
@@ -60,20 +68,32 @@ class TwitterBot:
         return "break"
 
   def get_follows(self, name):
-    url = "https://api.twitter.com/1.1/friends/ids.json"
-    params = {
-      "screen_name": name,
-      "count": 5000
-    }
-    res = self.twitter.get(url, params = params)
-    res_json = json.loads(res.text)
-    if res.status_code == 200:
-      ids = res_json["ids"]
-      return ids
-    else:
-      error = res_json["errors"][0]
-      self.error_code_decision(error["code"])
-      return []
+    ids = []
+    cursor = None
+    n = 0
+    while True:
+      n += 1
+      print(n)
+      url = "https://api.twitter.com/1.1/friends/ids.json"
+      params = {
+        "screen_name": name,
+        "count": 5000,
+        "cursor": cursor
+      }
+      res = self.twitter.get(url, params = params)
+      res_json = json.loads(res.text)
+      if res.status_code == 200:
+        res_ids = res_json["ids"]
+        cursor = res_json["next_cursor"]
+        if not cursor:
+          break
+        for id in res_ids:
+          ids.append(id)
+      else:
+        error = res_json["errors"][0]
+        self.error_code_decision(error["code"])
+        break
+    return ids
 
   def send_direct_message(self, id, text):
     url = "https://api.twitter.com/1.1/direct_messages/new.json"
@@ -101,14 +121,14 @@ class TwitterBot:
 print("start")
 twitter = TwitterBot()
 # twitter.get_tweets()
-ids = twitter.get_followers("marble_shinkan", 5000)
-my_follow_ids = twitter.get_follows("student_bar_")
-my_follower_ids = twitter.get_followers("student_bar_", 5000)
-for id in ids:
-  if (id in my_follow_ids):
-    continue
-  result = twitter.follow(id)
-  if result == "break":
-    break
-#for id in my_follower_ids:
- # twitter.send_direct_message(id, "フォローありがとうございます！4月29日に新歓やるのですが参加しませんか？(°▽°)")
+# ids = twitter.get_followers("marble_shinkan")
+# my_follow_ids = twitter.get_follows("student_bar_")
+# my_follower_ids = twitter.get_followers("student_bar_")
+# for id in ids:
+#   if (id in my_follow_ids):
+#     continue
+#   result = twitter.follow(id)
+#   if result == "break":
+#     break
+# for id in my_follower_ids:
+#   twitter.send_direct_message(id, "フォローありがとうございます！4月29日に新歓やるのですが参加しませんか？(°▽°)")
