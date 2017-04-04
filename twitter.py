@@ -8,6 +8,10 @@ class TwitterBot:
     AT = config.ACCESS_TOKEN
     ATS = config.ACCESS_TOKEN_SECRET
     self.twitter = OAuth1Session(CK, CS, AT, ATS)
+    self.target_accounts = [
+      "otsumauniv2017",
+      "seisen2017"
+    ]
 
   def get_tweets(self):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
@@ -62,6 +66,7 @@ class TwitterBot:
       print("follow %s" % res_json["name"])
     else:
       error = res_json["errors"][0]
+      print(error)
       self.error_code_decision(error["code"])
       if error["code"] == 161:
         return "break"
@@ -88,6 +93,7 @@ class TwitterBot:
       else:
         error = res_json["errors"][0]
         self.error_code_decision(error["code"])
+        print(error)
         break
     return ids
     print(ids)
@@ -116,20 +122,50 @@ class TwitterBot:
     else:
       print("エラー %d" % code)
 
+  def get_target_accounts(self):
+    return self.target_accounts
+
+  def tweet(self, text):
+    url = "https://api.twitter.com/1.1/statuses/update.json"
+    params = {
+      "status": text
+    }
+    res = self.twitter.post(url, params)
+    res_json = json.loads(res.text)
+    if res.status_code == 200:
+      print("text: %s" % res_json["text"])
+    else:
+      print(res_json["errors"][0])
+
 print("start")
 twitter = TwitterBot()
 # twitter.get_tweets()
-ids = twitter.get_follows("otsumauniv2017")
-print("ids")
+twitter.tweet("""
+Date 4/29
+Time 17〜20
+Plice 2000(新入生は割引)
+Place 新宿
+Detail
+お寿司やピザなどのフード🍕ケーキ🍰ドリンク飲み放題🍹ダーツ、カラオケ付き
+
+興味ある方はリプまたはDMお願いします！
+""")
+ids = []
+accounts = twitter.get_target_accounts()
 my_follow_ids = twitter.get_follows("student_bar_")
 print("my_follow_ids")
-my_follower_ids = twitter.get_followers("student_bar_")
-print("my_follwer_ids")
+for account in accounts:
+  print(account)
+  follows = twitter.get_follows(account)
+  print(len(follows))
+  for follow in follows:
+    if not (follow in my_follow_ids):
+      ids.append(follow)
+  print(len(ids))
+print("ids")
 for id in ids:
   if (id in my_follow_ids):
     continue
   result = twitter.follow(id)
   if result == "break":
     break
-for id in my_follower_ids:
-  twitter.send_direct_message(id, "フォローありがとうございます！4月29日に新歓やるのですが参加しませんか？(°▽°)")
