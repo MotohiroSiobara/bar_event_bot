@@ -54,7 +54,7 @@ class TwitterBot:
         break
     return ids
 
-  def follow(self, ids):
+  def follow(self, id):
     url = "https://api.twitter.com/1.1/friendships/create.json"
     params = {
       'user_id': id
@@ -65,9 +65,12 @@ class TwitterBot:
       print("follow %s" % res_json["name"])
     else:
       error = res_json["errors"][0]
+      print(error)
       self.error_code_decision(error["code"])
       if error["code"] == 161:
         return "break"
+      else:
+        return "error"
 
   def get_follow_ids(self, name):
     ids = []
@@ -187,37 +190,3 @@ class TwitterBot:
       error = res_json["errors"][0]
       self.error_code_decision(error["code"])
       return []
-
-# print("start")
-# twitter = TwitterBot()
-
-# # twitter.get_tweets()
-# twitter.tweet("""
-# Date 4/29
-# Time 17〜20
-# Plice 2000(新入生は割引)
-# Place 新宿
-# Detail
-# お寿司やピザなどのフード🍕ケーキ🍰ドリンク飲み放題🍹ダーツ、カラオケ付き
-
-# 興味ある方はリプまたはDMお願いします！
-# """)
-# ids = []
-# accounts = twitter.get_target_accounts()
-# my_follow_ids = twitter.get_follows("student_bar_")
-# print("my_follow_ids")
-# for account in accounts:
-#   print(account)
-#   follows = twitter.get_followers_list(account)
-#   print(len(follows))
-#   for follow in follows:
-#     if not (follow in my_follow_ids):
-#       ids.append(follow)
-#   print(len(ids))
-# print("ids")
-# for id in ids:
-#   if (id in my_follow_ids):
-#     continue
-#   result = twitter.follow(id)
-#   if result == "break":
-#     break
