@@ -1,5 +1,6 @@
-import json, config
+import json, config, response
 from requests_oauthlib import OAuth1Session
+import re
 
 class TwitterBot:
   def __init__(self):
@@ -8,17 +9,15 @@ class TwitterBot:
     AT = config.ACCESS_TOKEN
     ATS = config.ACCESS_TOKEN_SECRET
     self.twitter = OAuth1Session(CK, CS, AT, ATS)
-    self.target_accounts = [
-      "otsumauniv2017",
-      "seisen2017"
-    ]
+    GIRL_LISTS = config.GIRL_LISTS
+    ACCOUNTS = config.ACCOUNTS
 
   def get_tweets(self):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
     params ={
     'count': 5
     }
-    res = self.twitter.get(url, params = params)
+    res = TWITTER.get(url, params = params)
     if res.status_code == 200:
       timeline = json.loads(res.text)
       for tweet in timeline:
@@ -30,7 +29,7 @@ class TwitterBot:
       self.error_code_decision(error["code"])
       return []
 
-  def get_followers(self, name):
+  def get_follower_ids(self, name):
     ids = []
     cursor = None
     while True:
@@ -66,12 +65,11 @@ class TwitterBot:
       print("follow %s" % res_json["name"])
     else:
       error = res_json["errors"][0]
-      print(error)
       self.error_code_decision(error["code"])
       if error["code"] == 161:
         return "break"
 
-  def get_follows(self, name):
+  def get_follow_ids(self, name):
     ids = []
     cursor = None
     while True:
@@ -119,53 +117,107 @@ class TwitterBot:
       print("15分以内に15件実行したためしばらくおまちください")
     elif code == 34:
       print("そのページは存在しません")
+    elif code == 160:
+      print("すでにリクエストを送信済みです")
     else:
       print("エラー %d" % code)
-
-  def get_target_accounts(self):
-    return self.target_accounts
 
   def tweet(self, text):
     url = "https://api.twitter.com/1.1/statuses/update.json"
     params = {
       "status": text
     }
-    res = self.twitter.post(url, params)
+    res = self.twitter.post(url, params = params)
     res_json = json.loads(res.text)
     if res.status_code == 200:
       print("text: %s" % res_json["text"])
     else:
       print(res_json["errors"][0])
 
-print("start")
-twitter = TwitterBot()
-# twitter.get_tweets()
-twitter.tweet("""
-Date 4/29
-Time 17〜20
-Plice 2000(新入生は割引)
-Place 新宿
-Detail
-お寿司やピザなどのフード🍕ケーキ🍰ドリンク飲み放題🍹ダーツ、カラオケ付き
+  def get_followers_list(self, screen_name):
+    cursor = None
+    lists = []
+    while True:
+      url = "https://api.twitter.com/1.1/followers/list.json"
+      params = {
+        "screen_name": screen_name,
+        "count": 200,
+        "cursor": cursor
+      }
+      res = self.twitter.get(url, params = params)
+      res_json = json.loads(res.text)
+      if res.status_code == 200:
+        for user in res_json["users"]:
+          description = user["description"]
+          for girl in self.girl_lists:
+            if description.find(girl) > -1:
+              lists.append(user["id"])
+              break
+        cursor = res_json["next_cursor"]
+        if not cursor:
+          break
+      else:
+        error = res_json["errors"][0]
+        self.error_code_decision(error["code"])
+        break
+    return lists
 
-興味ある方はリプまたはDMお願いします！
-""")
-ids = []
-accounts = twitter.get_target_accounts()
-my_follow_ids = twitter.get_follows("student_bar_")
-print("my_follow_ids")
-for account in accounts:
-  print(account)
-  follows = twitter.get_follows(account)
-  print(len(follows))
-  for follow in follows:
-    if not (follow in my_follow_ids):
-      ids.append(follow)
-  print(len(ids))
-print("ids")
-for id in ids:
-  if (id in my_follow_ids):
-    continue
-  result = twitter.follow(id)
-  if result == "break":
-    break
+  def unfollow(self, user_id):
+    url = "https://api.twitter.com/1.1/friendships/destroy.json"
+    params = {
+      "user_id": user_id
+    }
+    res = self.twitter.post(url, params = params)
+    res_json = json.loads(res.text)
+    if res.status_code == 200:
+      print("名前: %s" % res_json["name"])
+    else:
+      print(res_json["errors"][0])
+
+  def get_lookup(self, ids):
+    url = "https://api.twitter.com/1.1/users/lookup.json"
+    params = {
+      "user_id": ids
+    }
+    res = self.twitter.get(url, params = params)
+    res_json = json.loads(res.text)
+    if res.status_code == 200:
+      return res_json
+    else:
+      error = res_json["errors"][0]
+      self.error_code_decision(error["code"])
+      return []
+
+# print("start")
+# twitter = TwitterBot()
+
+# # twitter.get_tweets()
+# twitter.tweet("""
+# Date 4/29
+# Time 17〜20
+# Plice 2000(新入生は割引)
+# Place 新宿
+# Detail
+# お寿司やピザなどのフード🍕ケーキ🍰ドリンク飲み放題🍹ダーツ、カラオケ付き
+
+# 興味ある方はリプまたはDMお願いします！
+# """)
+# ids = []
+# accounts = twitter.get_target_accounts()
+# my_follow_ids = twitter.get_follows("student_bar_")
+# print("my_follow_ids")
+# for account in accounts:
+#   print(account)
+#   follows = twitter.get_followers_list(account)
+#   print(len(follows))
+#   for follow in follows:
+#     if not (follow in my_follow_ids):
+#       ids.append(follow)
+#   print(len(ids))
+# print("ids")
+# for id in ids:
+#   if (id in my_follow_ids):
+#     continue
+#   result = twitter.follow(id)
+#   if result == "break":
+#     break
