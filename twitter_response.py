@@ -9,8 +9,7 @@ class Response:
             return res_json
         else:
             error = res_json["errors"][0]
-            print(error)
-            return None
+            return { "error": error }
 
     # テーブル作成用のデータを整形する
     def user_information(self,json):

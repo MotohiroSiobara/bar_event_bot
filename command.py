@@ -10,7 +10,7 @@ def follow_ids(screen_name):
     cursor = ""
     while True:
         response = twitter.get_friends_ids(screen_name, cursor)
-        if response == None:
+        if "error" in response:
             break
         else:
             ids = list(set(response["ids"]))
@@ -39,7 +39,7 @@ def follow_lists(screen_name):
     cursor = ""
     while True:
         response = twitter.get_friends_lists(screen_name, cursor)
-        if response == None:
+        if "error" in response:
             break
         else:
             my_follow_lists.extend(response["users"])
@@ -47,6 +47,14 @@ def follow_lists(screen_name):
         if cursor == None:
             break
     return my_follow_lists
+
+def user_follow(user_id):
+    response = twitter.follow(user_id)
+    if "error" in response:
+        code = response["error"]["code"]
+        if code == 162:
+            "break"
+        print(response["error"])
 
 def next_cursor(response):
     if len(response["next_cursor_str"]) > 0:

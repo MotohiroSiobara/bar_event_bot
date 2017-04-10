@@ -20,3 +20,10 @@ class User():
 
     def select_user_ids(self):
         return self.engine.execute('SELECT user_id FROM user')
+
+    def where(self, column, value):
+        if column == "follow_flg":
+            return self.engine.execute('SELECT user_id FROM user WHERE follow_flg=%s', value)
+    def update(self, column, value, user):
+        if column == "follow_flg":
+            return self.engine.execute('UPDATE user SET follow_flg=1 WHERE user_id=%s', user)
