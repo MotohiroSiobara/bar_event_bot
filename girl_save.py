@@ -3,24 +3,25 @@ from twitter_response import Response
 from user import User
 
 user_model = User()
-users = user_model.select_user_ids()
-user_ids = []
-for user in users:
-    user_ids.extend(list(user))
-my_follow_lists = command.follow_lists(config.MY_ACCOUNT)
-print("my_follow_lists")
-for list in my_follow_lists:
-        res = Response()
-        res.user_information(list)
-        print(res.name)
-        if res.user_id in user_ids:
-            continue
-        college = res.college
-        for girl in config.GIRL_LISTS:
-            if res.description.find(girl) > -1:
-              college = girl
-              break
-        user_model.create(name = res.name, user_id = res.user_id, screen_name = res.screen_name, follow_count = res.follow_count, follower_count = res.follower_count, follow_flg = res.follow_flg, follower_flg = res.follower_flg, url = res.url, college = college, description = res.description)
+user_model.create(name = "てすと", user_id = 399999, screen_name = "テスト", follow_count = 1, follower_count = 1, follow_flg = 1, follower_flg = 0, url = "url", college = "大妻", description = "詳細")
+# users = user_model.select_user_ids()
+# user_ids = []
+# for user in users:
+#     user_ids.extend(list(user))
+# my_follow_lists = command.follow_lists(config.MY_ACCOUNT)
+# print("my_follow_lists")
+# for list in my_follow_lists:
+#         res = Response()
+#         res.user_information(list)
+#         print(res.name)
+#         if res.user_id in user_ids:
+#             continue
+#         college = res.college
+#         for girl in config.GIRL_LISTS:
+#             if res.description.find(girl) > -1:
+#               college = girl
+#               break
+#         user_model.create(name = res.name, user_id = res.user_id, screen_name = res.screen_name, follow_count = res.follow_count, follower_count = res.follower_count, follow_flg = res.follow_flg, follower_flg = res.follower_flg, url = res.url, college = college, description = res.description)
 
 # for r in result:
 #     user_id = r["user_id"]
