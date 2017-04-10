@@ -5,6 +5,7 @@ class Response:
 
     def response_json(self, res):
         res_json = json.loads(res.text)
+        print(res_json)
         if res.status_code == 200:
             return res_json
         else:
@@ -18,7 +19,7 @@ class Response:
         self.screen_name = json["screen_name"]
         self.follow_count = json["friends_count"]
         self.follower_count = json["followers_count"]
-        self.follow_flg = 1
+        self.follow_flg = 0
         self.follower_flg = 0
         self.url = json["url"]
         self.description = re.sub("[^\\u0000-\\uFFFF]", "(絵)", (json["description"]))

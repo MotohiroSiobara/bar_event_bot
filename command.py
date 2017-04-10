@@ -53,11 +53,25 @@ def user_follow(user_id):
     if "error" in response:
         code = response["error"]["code"]
         if code == 162:
-            "break"
-        print(response["error"])
+            return "break"
+    return "ok"
 
 def next_cursor(response):
     if len(response["next_cursor_str"]) > 0:
         return response["next_cursor_str"]
     else:
         return  None
+
+def college_decision(description):
+    college = None
+    for girl in config.GIRL_LISTS:
+        if description.find(girl) > -1:
+            college = girl
+    return college
+
+def black_list_decision(name):
+    flg = False
+    for list in config.BLACK_LIST:
+        if name.find(list) > -1:
+            flg = True
+    return flg
