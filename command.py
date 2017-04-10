@@ -51,8 +51,9 @@ def follow_lists(screen_name):
 def user_follow(user_id):
     response = twitter.follow(user_id)
     if "error" in response:
+        print(response["error"])
         code = response["error"]["code"]
-        if code == 162:
+        if code == 161:
             return "break"
     return "ok"
 
@@ -67,6 +68,8 @@ def college_decision(description):
     for girl in config.GIRL_LISTS:
         if description.find(girl) > -1:
             college = girl
+            college = college_name_string(college)
+            break
     return college
 
 def black_list_decision(name):
@@ -75,3 +78,39 @@ def black_list_decision(name):
         if name.find(list) > -1:
             flg = True
     return flg
+
+def college_name_string(college):
+    if college == "owu":
+        return "大妻"
+    elif college == "jwu":
+        return "実践"
+    elif college == "kwu":
+        return "共立"
+    elif college == "ush":
+        return "聖心"
+    elif college == "kwu":
+        return "家政"
+    elif college == "jwu":
+        return "東京女"
+    elif college == "fri":
+        return "フェリス"
+    elif college == "agwjc":
+        return "青短"
+    elif college == "swu":
+        return "昭和女"
+    elif college == "gwc":
+        return "学女"
+    elif college == "swu":
+        return "相模"
+    elif college == "atm":
+        return "跡見"
+    elif college == "sgu":
+        return "白梅"
+    elif college == "sfu":
+        return "聖徳"
+    elif college == "jwu":
+        return "十文字"
+    elif college == "wjc":
+        return "立短"
+    else:
+        college

@@ -5,6 +5,7 @@ from user import User
 user_model = User()
 result = user_model.where(column="follow_flg", value=0)
 user_ids = list(result)
+print(user_ids)
 for user_id in user_ids:
     result = command.user_follow(user_id)
     if result == "break":

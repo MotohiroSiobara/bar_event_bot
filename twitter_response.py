@@ -5,7 +5,6 @@ class Response:
 
     def response_json(self, res):
         res_json = json.loads(res.text)
-        print(res_json)
         if res.status_code == 200:
             return res_json
         else:
