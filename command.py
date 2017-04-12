@@ -30,8 +30,11 @@ def get_lookup(ids):
         else:
             i = (i + 1) * 100
             target_ids = ids[i - 100: i]
-        lists = twitter.get_lookup(target_ids)
-        user_lists.extend(lists)
+        response = twitter.get_lookup(target_ids)
+        if "error" in response:
+            break
+        else:
+            user_lists.extend(response)
     return user_lists
 
 def follow_lists(screen_name):
@@ -67,8 +70,7 @@ def college_decision(description):
     college = None
     for girl in config.GIRL_LISTS:
         if description.find(girl) > -1:
-            college = girl
-            college = college_name_string(college)
+            college = college_name_string(girl)
             break
     return college
 
@@ -77,6 +79,7 @@ def black_list_decision(name):
     for list in config.BLACK_LIST:
         if name.find(list) > -1:
             flg = True
+            break
     return flg
 
 def college_name_string(college):
@@ -113,4 +116,4 @@ def college_name_string(college):
     elif college == "wjc":
         return "立短"
     else:
-        college
+        return college

@@ -19,7 +19,10 @@ class Response:
         self.screen_name = json["screen_name"]
         self.follow_count = json["friends_count"]
         self.follower_count = json["followers_count"]
-        self.follow_flg = 0
+        if json["following"]:
+            self.follow_flg = 1
+        else:
+            self.follow_flg = 0
         self.follower_flg = 0
         self.url = json["url"]
         self.description = re.sub("[^\\u0000-\\uFFFF]", "(絵)", (json["description"]))

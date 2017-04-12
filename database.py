@@ -2,7 +2,7 @@ import sqlalchemy as sa
 
 url = 'mysql+pymysql://root:@localhost/bar_event?charset=utf8'
 ENGINE = sa.create_engine(url, echo=True)
-
+# ENGINE.execute('CREATE TABLE target_id (id INT AUTO_INCREMENT PRIMARY KEY, user_id VARCHAR(20))')
 # ENGINE.execute('DROP TABLE user')
 # ENGINE.execute('CREATE TABLE user (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(20), user_id  VARCHAR(20), screen_name VARCHAR(20), follow_count INT, follower_count INT, profile_image_url VARCHAR(20), follow_flg BIT, follower_flg BIT, url VARCHAR(255), college VARCHAR(255), description VARCHAR(255))')
 
