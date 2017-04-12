@@ -11,7 +11,7 @@ for user in users:
     user_ids.extend(list(user))
 accounts = config.ACCOUNTS
 for account in accounts:
-    target_follow_ids = command.follow_ids(account)
+    target_follow_ids = list(set(command.follow_ids(account)))
     for id in target_follow_ids:
         if id in user_ids:
             continue

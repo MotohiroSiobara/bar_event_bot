@@ -8,6 +8,7 @@ class Response:
         if res.status_code == 200:
             return res_json
         else:
+            print(res_json)
             error = res_json["errors"][0]
             print(error)
             return { "error": error }
