@@ -1,0 +1,18 @@
+[user]
+  name = MotohiroSiobara
+  email = siobara.motohiro@gmail.com (#git登録時の自分のメアド)
+
+[alias] (#これはお好きに) 
+  br = branch
+  co = checkout
+  st = status
+  ci = commit
+
+[color] (#色付け)
+  ui = true
+
+# githubの場合
+[url "github:"] (#pull、pushのための設定)
+    InsteadOf = https://github.com/
+    InsteadOf = git@github.com:
+
