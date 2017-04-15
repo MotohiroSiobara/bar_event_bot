@@ -28,3 +28,6 @@ class Response:
         self.url = json["url"]
         self.description = re.sub("[^\\u0000-\\uFFFF]", "(絵)", (json["description"]))
         self.college = ""
+
+    def user_status(self, json):
+        self.status_date = json["status"]["created_at"]
