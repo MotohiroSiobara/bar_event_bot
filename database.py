@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 
-url = 'mysql+pymysql://root:@localhost/bar_event?charset=utf8'
+url = 'sqlite:///bar_event.db'
 ENGINE = sa.create_engine(url, echo=True)
 
 # ENGINE.execute('DROP TABLE user')
