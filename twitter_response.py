@@ -13,21 +13,19 @@ class Response:
             print(error)
             return { "error": error }
 
-    # テーブル作成用のデータを整形する
+    # テーブル作成用のデータを整形する users/lookup用
     def user_information(self,json):
         self.name = re.sub("[^\\u0000-\\uFFFF]", "(絵)", (json["name"]))
         self.user_id = str(json["id"])
         self.screen_name = json["screen_name"]
         self.follow_count = json["friends_count"]
         self.follower_count = json["followers_count"]
-        if json["following"]:
-            self.follow_flg = 1
-        else:
-            self.follow_flg = 0
+        self.follow_flg = 0
         self.follower_flg = 0
         self.url = json["url"]
         self.description = re.sub("[^\\u0000-\\uFFFF]", "(絵)", (json["description"]))
         self.college = ""
+        self.protected = json["protected"]
 
     def user_status(self, json):
         self.status_date = json["status"]["created_at"]

@@ -10,7 +10,6 @@ class TwitterBot:
         ATS = config.ACCESS_TOKEN_SECRET
         self.twitter = OAuth1Session(CK, CS, AT, ATS)
         GIRL_LISTS = config.GIRL_LISTS
-        ACCOUNTS = config.ACCOUNTS
 
     def get_tweets(self):
         url = "https://api.twitter.com/1.1/statuses/user_timeline.json"

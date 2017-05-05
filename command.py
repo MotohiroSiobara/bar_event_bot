@@ -53,6 +53,7 @@ def follow_lists(screen_name):
 
 def user_follow(user_id):
     response = twitter.follow(user_id)
+    print(response)
     if "error" in response:
         print(response["error"])
         code = response["error"]["code"]
@@ -69,7 +70,7 @@ def next_cursor(response):
 def college_decision(description):
     college = None
     for girl in config.GIRL_LISTS:
-        if description.find(girl) > -1:
+        if description.lower().find(girl) > -1:
             college = college_name_string(girl)
             break
     return college
@@ -85,7 +86,7 @@ def black_list_decision(name):
 def college_name_string(college):
     if college == "owu":
         return "大妻"
-    elif college == "jwu":
+    elif college == "jj":
         return "実践"
     elif college == "kwu":
         return "共立"
