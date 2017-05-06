@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 import traceback
 logging.basicConfig(filename='girl_save.log',level=logging.DEBUG)
-logging.info('Start girl_save')
+logging.info('スタートします')
 logging.info(datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
 user_model = User()
 account = user_model.random_screen_name()

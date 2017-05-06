@@ -82,3 +82,8 @@ class TwitterBot:
         }
         req = Request(self.twitter)
         return  req.get(url, params)
+
+    def get_verify_credentials(self):
+        url = "https://api.twitter.com/1.1/account/verify_credentials.json"
+        req = Request(self.twitter)
+        return req.get(url)

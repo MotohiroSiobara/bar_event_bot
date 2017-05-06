@@ -118,3 +118,10 @@ def college_name_string(college):
         return "立短"
     else:
         return college
+
+def my_friend_counts():
+    response = twitter.get_verify_credentials()
+    if "error" in response:
+        return 0
+    else:
+        return response["friends_count"]
